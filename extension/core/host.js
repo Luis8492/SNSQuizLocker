@@ -14,6 +14,8 @@
   var card = null;        // クイズの描画先
   var pauseTimer = null;  // 背後のメディアを止め続けるタイマー
   var currentId = null;   // ゲート中のロックキー（site.id + ":" + lockId）
+  var adMuted = [];       // 広告のため関所が消音した <video>（後で元に戻す）
+  var adObserver = null;  // 広告の開始／終了（クラス変化）を即座に拾う監視
 
   // ---- ロック対象の判定（サイトアダプタに委譲） --------------------------
   // 返り値: "youtube:v:xxxx" / "x:site" のようなロックキー。対象外なら null。
@@ -38,6 +40,57 @@
     }
   }
 
+  // ---- 背後のメディアを抑える ------------------------------------------------
+  // 本編は一時停止する。広告（サイトアダプタの isAd が判定）は止めずに消音して
+  // 流しきる。止めると広告が進まず、解除後に結局見せられるため。
+  function unmuteAd(v) {
+    var i = adMuted.indexOf(v);
+    if (i === -1) return;
+    adMuted.splice(i, 1);
+    try { v.muted = false; } catch (e) {}
+  }
+
+  function holdMedia() {
+    var site = K.getActiveSite(location.hostname);
+    var vids = document.querySelectorAll("video");
+    for (var i = 0; i < vids.length; i++) {
+      var v = vids[i];
+      if (site && site.isAd && site.isAd(v)) {
+        if (!v.muted) {
+          try { v.muted = true; } catch (e) {}
+          if (adMuted.indexOf(v) === -1) adMuted.push(v);
+        }
+      } else {
+        // 広告明けは同じ要素で本編が始まるので、先に止めてから消音を戻す
+        if (!v.paused) { try { v.pause(); } catch (e) {} }
+        unmuteAd(v);
+      }
+    }
+  }
+
+  // 400ms 周期だと広告の頭や広告明けの本編で音が漏れるため、サイトアダプタの
+  // adWatch（広告状態がクラスに出る要素）のクラス変化を監視して即座に反応する。
+  // プレーヤーは遷移で作り直されるので、要素ではなく文書全体を見て絞り込む。
+  function watchAds() {
+    var site = K.getActiveSite(location.hostname);
+    if (!site || !site.adWatch || !window.MutationObserver) return;
+    adObserver = new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var t = muts[i].target;
+        if (t.matches && t.matches(site.adWatch)) { holdMedia(); return; }
+      }
+    });
+    adObserver.observe(document.documentElement, {
+      attributes: true, attributeFilter: ["class"], subtree: true
+    });
+  }
+
+  // 関所を閉じるとき、監視を止めて、関所が消音したものだけ元に戻す
+  function releaseMedia() {
+    if (adObserver) { adObserver.disconnect(); adObserver = null; }
+    while (adMuted.length) unmuteAd(adMuted[0]);
+  }
+
   // ---- オーバーレイの生成／破棄 ------------------------------------------
   function ensureOverlay() {
     if (overlay) return;
@@ -49,16 +102,14 @@
     (document.documentElement || document.body).appendChild(overlay);
     document.documentElement.classList.add("ytg-lock-scroll");
 
-    pauseTimer = setInterval(function () {
-      var vids = document.querySelectorAll("video");
-      for (var i = 0; i < vids.length; i++) {
-        if (!vids[i].paused) { try { vids[i].pause(); } catch (e) {} }
-      }
-    }, 400);
+    holdMedia();
+    pauseTimer = setInterval(holdMedia, 400);
+    watchAds();
   }
 
   function removeOverlay() {
     if (pauseTimer) { clearInterval(pauseTimer); pauseTimer = null; }
+    releaseMedia();
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     overlay = null;
     card = null;

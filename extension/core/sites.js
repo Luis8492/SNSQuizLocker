@@ -6,6 +6,10 @@
 //   spec.title  : 選択パネルでの表示名
 //   spec.match  : function(hostname) → このサイトのページか
 //   spec.lockId : function(href) → ロック対象なら一意なID文字列、対象外ページなら null
+//   spec.isAd   : (任意) function(video) → その <video> が広告再生中か。
+//                 広告は止めずに消音で流しきる（止めると解除後に結局見せられるため）
+//   spec.adWatch: (任意) 広告の開始／終了でクラスが変わる要素のセレクタ。
+//                 そのクラス変化を監視して、広告の消音・広告明けの停止を即座に行う
 //
 // 解除は「site.id + ":" + lockId」の単位で、タブのセッション中だけ保持される
 // （sessionStorage。タブを閉じて開き直すと再出題）。
@@ -58,6 +62,12 @@
       } catch (e) {
         return null;
       }
+    },
+    // 広告中はプレーヤー（通常・ショートとも .html5-video-player）に
+    // ad-showing クラスが付く。広告も本編と同じ <video> 要素で再生される。
+    adWatch: ".html5-video-player",
+    isAd: function (video) {
+      return !!(video.closest && video.closest(".html5-video-player.ad-showing"));
     }
   });
 

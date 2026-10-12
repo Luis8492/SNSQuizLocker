@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SNSQuizLocker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "SNSを開くとクイズ（古典文学の書き取り・百人一首・聴音・詰将棋）を出題し、全問正解するまでブロックする見すぎ防止ツール。ロック対象のサイトは設定画面から選べます。",
   "icons": {
     "16": "icons/icon16.png",
