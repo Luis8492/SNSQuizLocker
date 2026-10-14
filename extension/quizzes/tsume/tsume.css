@@ -29,14 +29,35 @@
   box-sizing: border-box;
 }
 
+/* 駒: 実物の駒と同じ五角形の枠。先端が向いている側が持ち主の相手方なので、
+   玉方の駒は丸ごと180度回転させて向きで先後が分かるようにする。
+   ::before が濃い縁、::after が一回り小さい駒面（clip-path は border を描けないため二重に重ねる）。 */
 .ts-piece {
-  font-size: clamp(16px, 4.2vmin, 28px);
+  position: relative;
+  isolation: isolate; /* 擬似要素(z-index:-1)を文字の背面かつ駒の内側に留める */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84%;
+  height: 92%;
+  padding-top: 8%; /* 尖った上端を避けて文字をやや下に */
+  box-sizing: border-box;
+  font-size: clamp(14px, 3.8vmin, 25px);
   font-weight: 700;
   color: #1c1508;
   line-height: 1;
   pointer-events: none;
 }
-.ts-gote { transform: rotate(180deg); display: inline-block; }
+.ts-piece::before,
+.ts-piece::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  clip-path: polygon(50% 0, 86% 16%, 100% 100%, 0 100%, 14% 16%);
+}
+.ts-piece::before { inset: 0; background: #6b5434; }
+.ts-piece::after { inset: 1.5px; background: #f3dfa9; }
+.ts-gote { transform: rotate(180deg); }
 .ts-promoted { color: #a3231d; }
 
 /* 選択中の駒・直前の着手・候補マス（木地の上の固定色） */
