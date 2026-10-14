@@ -1,6 +1,6 @@
 # 詰将棋（tsume / tsume5 / tsume7）
 
-詰将棋。CSS描画の将棋盤をクリックして詰手順を指す。
+詰将棋。CSS描画の将棋盤をクリックして詰手順を指す。盤上の駒は五角形の駒枠付きで、玉方の駒は枠ごと180度回転して向きで先後が分かる。駒の文字は筆書きの楷書体 Yuji Syuku（SIL OFL 1.1、`fonts/OFL.txt`）を駒の文字＋漢数字だけにサブセットした `fonts/koma.woff2`（約9KB）で描く。再生成は `scripts/gen_koma_font.py`。
 **手数ごとに別プラグイン**として登録される（`tsume.js` の `VARIANTS`）:
 
 | id | 手数 |
