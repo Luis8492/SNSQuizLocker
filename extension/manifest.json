@@ -88,7 +88,8 @@
         "quizzes/hyakunin/hyakunin.css",
         "quizzes/juon/juon.css",
         "quizzes/senritsu/senritsu.css",
-        "quizzes/tsume/tsume.css"
+        "quizzes/tsume/tsume.css",
+        "quizzes/tsume/fonts/koma.woff2"
       ],
       "matches": [
         "*://*.youtube.com/*",

@@ -3,6 +3,17 @@
    盤・駒・持駒チップは将棋盤実物の木の色なので両モード共通の固定色。
    周辺のラベル・状態表示にトークンを使う。 */
 
+/* --- 駒フォント ----------------------------------------------------------
+   駒の文字は筆書きの楷書体(Yuji Syuku, SIL OFL 1.1)を駒の文字だけに
+   サブセットして同梱(fonts/koma.woff2, 生成は scripts/gen_koma_font.py)。
+   コンテンツスクリプトのCSSでは相対URLがページ側に解決されるため拡張のURLで指す
+   (chrome-extension スキームはページのCSPの対象外)。 */
+@font-face {
+  font-family: "ts-koma";
+  src: url("chrome-extension://__MSG_@@extension_id__/quizzes/tsume/fonts/koma.woff2") format("woff2");
+  font-display: block;
+}
+
 /* --- 盤 ------------------------------------------------------------------ */
 .ts-board {
   position: relative; /* 「正解」オーバーレイの基準 */
@@ -42,8 +53,9 @@
   height: 92%;
   padding-top: 8%; /* 尖った上端を避けて文字をやや下に */
   box-sizing: border-box;
-  font-size: clamp(14px, 3.8vmin, 25px);
-  font-weight: 700;
+  font-family: "ts-koma", "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(15px, 4vmin, 27px);
+  font-weight: 400; /* 筆書体は元々太いので疑似ボールドをかけない */
   color: #1c1508;
   line-height: 1;
   pointer-events: none;
@@ -102,8 +114,8 @@
   border-radius: 8px;
   background: #e3c78f;
   color: #1c1508;
-  font-size: 16px;
-  font-weight: 700;
+  font-family: "ts-koma", "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: 17px;
   border: 1px solid #8a744e;
 }
 .ts-chip-mine { cursor: pointer; }
