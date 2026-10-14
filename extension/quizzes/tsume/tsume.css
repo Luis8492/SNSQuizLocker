@@ -108,21 +108,30 @@
   letter-spacing: 0.1em;
   white-space: nowrap;
 }
+/* 持駒: 駒枠付きの駒＋枚数（漢数字）。玉方の持駒は盤上と同じく逆向き */
 .ts-chip {
-  display: inline-block;
-  padding: 4px 9px;
-  border-radius: 8px;
-  background: #e3c78f;
-  color: #1c1508;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1px;
+  padding: 2px 3px;
+  border-radius: 6px;
+}
+.ts-hand-piece {
+  width: 34px;
+  height: 38px;
+  font-size: 20px;
+}
+.ts-count {
   font-family: "ts-koma", "Yu Mincho", "Hiragino Mincho ProN", serif;
-  font-size: 17px;
-  border: 1px solid #8a744e;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--k-ink);
+  padding-bottom: 2px;
 }
 .ts-chip-mine { cursor: pointer; }
-.ts-chip-mine:hover { background: #f0dfae; }
+.ts-chip-mine:hover { background: var(--k-surface); }
 .ts-chip-none {
-  background: none;
-  border: none;
+  padding: 0;
   color: var(--k-sub);
   font-weight: 400;
   font-size: 12.5px;
