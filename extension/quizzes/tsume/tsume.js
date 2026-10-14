@@ -211,8 +211,10 @@
       for (var t = S.HI; t >= S.FU; t--) {
         if (hand[t] <= 0) continue;
         any = true;
-        var chip = el("span", "ts-chip" + (color === 1 ? " ts-chip-mine" : ""),
-          CHAR[t] + (hand[t] > 1 ? KANJI_NUM[hand[t]] : ""));
+        // 駒は盤上と同じ駒枠で描き、枚数は駒の外に添える（「金」三。1枚なら数字なし）
+        var chip = el("span", "ts-chip" + (color === 1 ? " ts-chip-mine" : ""));
+        chip.appendChild(el("span", "ts-piece ts-hand-piece" + (color === -1 ? " ts-gote" : ""), CHAR[t]));
+        if (hand[t] > 1) chip.appendChild(el("span", "ts-count", KANJI_NUM[hand[t]]));
         if (color === 1) {
           chip.setAttribute("data-piece", t);
           if (g.sel && g.sel.kind === "hand" && g.sel.piece === t) chip.classList.add("ts-selsq");

@@ -12,7 +12,7 @@ from fontTools import subset
 from fontTools.merge import Merger
 
 # tsume.js の CHAR(駒) と KANJI_NUM(持駒の枚数) に一致させる
-CHARS = "歩香桂銀金角飛玉王と杏圭全馬龍" + "一二三四五六七八九十"
+CHARS = "歩香桂銀金角飛玉王と杏圭全馬竜龍" + "一二三四五六七八九十"
 
 def main(pkg, out):
     css = open(os.path.join(pkg, "index.css"), encoding="utf-8").read()
